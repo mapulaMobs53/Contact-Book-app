@@ -1,56 +1,58 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Contacts</title>
-    </head>
-    <body onload="fetchContacts()">
-        <div id="table">Contacts Loading...</div>
-        <button id="refresh" type="button" onclick="fetchContacts()">Refresh</button>
-        <button id="addContact" type="button">Add Contact</button>
-        
-        <script src="config.js"></script>
-        <script>
-             document.getElementById("addContact").addEventListener('click',addContact);
-            document.getElementById("refresh").addEventListener('click',fetchContacts());
-            function fetchContacts() {
-                fetch(rootPath + "controller/get-contacts/")
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function(data) {
+<head>
+    <meta charset="UTF-8">
+    <title>Contacts</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
+</head>
+<body onload="fetchContacts()">
+    <div class="container">
+        <h1>Contact List</h1>
+        <div id="table" class="contacts">Contacts Loading...</div>
+        <div class="buttons">
+            <button id="refresh" type="button">Refresh</button>
+            <button id="addContact" type="button">Add Contact</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("addContact").addEventListener('click', addContact);
+        document.getElementById("refresh").addEventListener('click', fetchContacts);
+
+        function fetchContacts() {
+            fetch(rootPath + "controller/get-contacts/")
+                .then(response => response.json())
+                .then(data => {
                     displayOutput(data);
-                    //console.log(data);
                 })
-                .catch(function(error) {
+                .catch(error => {
                     console.error('Error fetching contacts:', error);
                     document.getElementById("table").innerHTML = "Error loading contacts";
                 });
-            }
+        }
 
-            function displayOutput(data) {
-                let output = "<table>";
-                for (let a in data) {
-                    output += 
-
-                    `<tr onclick="editContact(${data[a].id})">
+        function displayOutput(data) {
+            let output = "<table>";
+            for (let a in data) {
+                output += `
+                    <tr onclick="editContact(${data[a].id})">
                         <td><img src="${rootPath}controller/uploads/${data[a].avatar}" width="40" alt="Avatar"/></td>
                         <td><h5>${data[a].firstname}</h5></td>
                         <td><h5>${data[a].lastname}</h5></td>
                     </tr>`;
-                }
-                output += "</table>";
-                document.getElementById("table").innerHTML = output;
             }
+            output += "</table>";
+            document.getElementById("table").innerHTML = output;
+        }
 
-            function addContact()
-            {
-                window.open("add-cntact.html","_self");
-            }
+        function addContact() {
+            window.open("add-contact.html", "_self");
+        }
 
-            function editContact(id)
-            {
-                window.open("edit-contact.html?id=" + id, "_self");
-            }
-        </script>
-    </body>
+        function editContact(id) {
+            window.open("edit-contact.html?id=" + id, "_self");
+        }
+    </script>
+</body>
 </html>

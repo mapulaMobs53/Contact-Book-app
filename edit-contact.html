@@ -1,136 +1,207 @@
+<!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="style.css">
         <meta charset="UTF-8">
-
+        <title>Contact Details</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body onload="getContact()">
         <div id="avatarImage"></div>
-         <form id="editForm">
-            <label for="firstname">First name</label>
-            <input type="text" name="firstname" id="firstname" readonly><br/>
-            <label for="lastname">Last name</label>
-            <input type="text" name="lastname" id="lastname" readonly><br/>
-            <label for="mobile">Mobile</label>
-            <input type="text" name="mobile" id="mobile" readonly><br/>
-            <label for="email">Email</label>
-            <input type="text" name="email" id="email" readonly><br/>
-            <label for="avatar" id="avatarLabel" hidden>Change Profile</label><br/>
-            <input type="file" name="avatar" id="avatar" hidden><br/>
+        <form id="editForm">
+            <label for="firstname">First name:</label>
+            <input type="text" name="firstname" id="firstname" readonly><br/><br/>
+            
+            <label for="lastname">Last name:</label>
+            <input type="text" name="lastname" id="lastname" readonly><br/><br/>
+            
+            <label for="mobile">Mobile:</label>
+            <input type="tel" name="mobile" id="mobile" readonly><br/><br/>
+            
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" readonly><br/><br/>
+            
+            <label for="avatar" id="avatarLabel" hidden>Change Profile:</label><br/>
+            <input type="file" name="avatar" id="avatar" hidden accept="image/*"><br/>
+            
             <button type="submit" id="submitForm" hidden>Submit</button>
         </form>
         <br/><br/>
         <button id="homeLink" type="button">Home</button>
         <button id="editContact" type="button">Edit</button>
         <button id="deleteContact" type="button">Delete</button>
-        <script src="config.js">
-            document.getElementById("deleteContact").addEventListener('click',deleteContact);
-            document.getElementById("submitForm").addEventListener('click',submitForm);
-            document.getElementById("homeLink").addEventListener('click',homeLink);
-            document.getElementById("editContact").addEventListener('click',editContat);
+        
+        <script src="config.js"></script>
+        <script>
+            // Check if API key exists, redirect if not
+            function checkApiKey() {
+                if(!localStorage.getItem("apiKey")) {
+                    window.location.href = "enter-api-key.html";
+                    return null;
+                }
+                return localStorage.getItem("apiKey");
+            }
+
+            let rootpath = "https://mysite.itvarsity.org/api/ContactBook/";
+            let apiKey = checkApiKey();
+            
+            // Get contact ID from URL
             var id = getId();
-            function getId()
-            {
+            
+            // Add event listeners
+            document.getElementById("deleteContact").addEventListener('click', deleteContact);
+            document.getElementById("editForm").addEventListener('submit', submitForm);
+            document.getElementById("homeLink").addEventListener('click', homeLink);
+            document.getElementById("editContact").addEventListener('click', editContact);
+            
+            function getId() {
                 var url = window.location.href;
                 var pos = url.search("=");
+                if (pos === -1) {
+                    alert("No contact ID found in URL");
+                    homeLink();
+                    return null;
+                }
                 var id = url.slice(pos + 1);
                 return id;
             }
 
-            function getContact()
-            {
-                fetch(rootPath + "controller/get-contacts/?id=" + id)
-                .then(function(response)
-            {
-                return response.json();
-            })
-            .then(function(response)
-            {
-                displayOutput(data);
-            })
+            function getContact() {
+                if (!id) return;
+                
+                fetch(rootpath + "controller/get-contacts/?id=" + id + "&apiKey=" + apiKey)
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    displayOutput(data);
+                })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    alert("Error loading contact details. Please try again.");
+                });
             }
 
-            function homeLink()
-            {
-                window.open("index.html","_self");
+            function homeLink() {
+                window.location.href = "index.html";
             }
 
-            function displayOutput(data)
-            {
-                avatarImg = 
-                `img src="${rootPath}/controller/uploads/${data[0].avatar}" width="200"/>`
+            function displayOutput(data) {
+                if (!data || data.length === 0) {
+                    alert("Contact not found");
+                    homeLink();
+                    return;
+                }
+                
+                // Fixed image tag syntax
+                let avatarImg = `<img src="${rootpath}controller/uploads/${data[0].avatar}" width="200" alt="Contact Avatar" onerror="this.style.display='none'"/>`;
                 document.getElementById("avatarImage").innerHTML = avatarImg;
-                document.getElementById("firstname").value = data[0].firstname;
-                document.getElementById("lastname").value = data[0].lastname;
-                document.getElementById("mobile").value = data[0].mobile;
-                document.getElementById("email").value = data[0].email;
+                document.getElementById("firstname").value = data[0].firstname || '';
+                document.getElementById("lastname").value = data[0].lastname || '';
+                document.getElementById("mobile").value = data[0].mobile || '';
+                document.getElementById("email").value = data[0].email || '';
             }
 
-            function editContat()
-            {
+            function editContact() {
+                // Fixed property name from readOnly to readonly
                 document.getElementById("firstname").readOnly = false;
                 document.getElementById("lastname").readOnly = false;
                 document.getElementById("mobile").readOnly = false;
                 document.getElementById("email").readOnly = false;
                 document.getElementById("avatar").hidden = false;
+                document.getElementById("avatarLabel").hidden = false;
                 document.getElementById("submitForm").hidden = false;
             }
 
-            function submitForm(e)
-            {
+            function submitForm(e) {
                 e.preventDefault();
-                 const form = new FormData(document.querySelector("#editForm"));
-                 form.append('apiKey',apiKey);
-                 form.append('id',id);
-                 fetch(rootPath + 'controller/insert-contact/',
-                    {
-                        method: 'POST',
-                        headers: {'Accept': 'application/json, *.*'},
-                        body: form
-                    }
-                )
-                .then(function(response)
-                    {
-                        return response.text();
-                    }
-                )
-                .then(function(data)
-                {
-                    if(data == "1")
-                    {
-                        alert("Contact edited successfully.");
-                    }
-                    else
-                    {
-                        alert(data);
-                        homeLink();
-                    }
+                
+                // Validate required fields
+                const firstname = document.getElementById("firstname").value.trim();
+                const lastname = document.getElementById("lastname").value.trim();
+                const mobile = document.getElementById("mobile").value.trim();
+                const email = document.getElementById("email").value.trim();
+                
+                if (!firstname || !lastname || !mobile || !email) {
+                    alert("Please fill in all required fields.");
+                    return;
+                }
+                
+                // Validate email format
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert("Please enter a valid email address.");
+                    return;
+                }
+                
+                const form = new FormData(document.querySelector("#editForm"));
+                form.append('apiKey', apiKey);
+                form.append('id', id);
+                
+                // Fixed endpoint - should be update-contact, not insert-contact
+                fetch(rootpath + 'controller/update-contact/', {
+                    method: 'POST',
+                    headers: {'Accept': 'application/json, */*'},
+                    body: form
                 })
-            }
-
-            function deleteContact()
-            {
-                var confirmDelete = confirm("Delete contact. Are you Sure my dhiye?!");
-                if(confirmDelete == true)
-                {
-                    fetch(rootPath + 'controller/delete-conctact/?id=' + id)
-                    .then(function(response)
-                {
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
                     return response.text();
                 })
-                .then(function(response)
-                {
-                    if(data==1)
-                    {
-                        homeLink();
-                    }
-                else
-                    {
-                        alert(data);
+                .then(function(data) {
+                    if(data == "1") {
+                        alert("Contact updated successfully.");
+                        // Refresh the contact data
+                        getContact();
+                        // Hide edit elements
+                        document.getElementById("firstname").readOnly = true;
+                        document.getElementById("lastname").readOnly = true;
+                        document.getElementById("mobile").readOnly = true;
+                        document.getElementById("email").readOnly = true;
+                        document.getElementById("avatar").hidden = true;
+                        document.getElementById("avatarLabel").hidden = true;
+                        document.getElementById("submitForm").hidden = true;
+                    } else {
+                        alert("Error updating contact: " + data);
                     }
                 })
+                .catch(function(error) {
+                    console.error('Error:', error);
+                    alert("Error updating contact. Please try again.");
+                });
+            }
+
+            function deleteContact() {
+                var confirmDelete = confirm("Are you sure you want to delete this contact?");
+                if(confirmDelete === true) {
+                    // Fixed typo in URL - "conctact" to "contact"
+                    fetch(rootpath + 'controller/delete-contact/?id=' + id + '&apiKey=' + apiKey)
+                    .then(function(response) {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.text();
+                    })
+                    .then(function(data) {
+                        // Fixed variable name from "response" to "data"
+                        if(data == "1") {
+                            alert("Contact deleted successfully.");
+                            homeLink();
+                        } else {
+                            alert("Error deleting contact: " + data);
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                        alert("Error deleting contact. Please try again.");
+                    });
                 }
             }
-            
         </script>
     </body>
 </html>

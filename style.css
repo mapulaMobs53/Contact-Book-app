@@ -1,0 +1,327 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #0f0f0f, #001f3f); /* transparent black to navy */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* transparent black */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 50, 0.6);
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #e0e0ff;
+}
+
+.contacts table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.contacts td {
+    padding: 12px 20px;
+    border-bottom: 1px solid #2c3e50;
+    text-align: left;
+    color: #f0f0f0;
+}
+
+.contacts tr {
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.contacts tr:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.contacts img {
+    border-radius: 50%;
+}
+
+.buttons {
+    margin-top: 20px;
+}
+
+button {
+    background: linear-gradient(to right, #001f3f, #0f0f0f);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(to right, #003366, #222);
+}
+/* General page styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #0f0f0f, #001f3f); /* Transparent black to navy blue */
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Centered form container */
+form, .form-container {
+    background-color: rgba(0, 0, 0, 0.6); /* semi-transparent black */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 50, 0.6);
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #e0e0ff;
+}
+
+/* Label and input styling */
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #000;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: outline 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="email"]:focus,
+input[type="file"]:focus {
+    outline: 2px solid #003366;
+}
+
+/* Button styling */
+button {
+    background: linear-gradient(to right, #001f3f, #0f0f0f);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin-top: 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(to right, #003366, #222);
+}
+
+/* Home button separate */
+#homeLink {
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    margin-top: 10px;
+}
+
+#homeLink:hover {
+    background: #001f3f;
+}
+/* Import a stylish Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: linear-gradient(to bottom right, rgba(0, 0, 50, 0.8), rgba(0, 0, 0, 0.8));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+}
+
+form {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    min-width: 300px;
+}
+
+form input[type="text"] {
+    padding: 12px 16px;
+    width: 100%;
+    margin: 20px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+form button {
+    background-color: navy;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #001f4d;
+}
+
+div {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+/* Use a modern, readable font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+/* Heading */
+h1 {
+    margin-bottom: 25px;
+    font-size: 2rem;
+}
+
+/* Avatar image */
+#avatarImage {
+    margin-bottom: 20px;
+}
+#avatarImage img {
+    width: 200px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+/* Form styling */
+form {
+    background-color: rgba(255, 255, 255, 0.07);
+    padding: 25px 30px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 20px;
+}
+
+/* Labels */
+label {
+    text-align: left;
+    margin: 10px 0 5px;
+    font-weight: 600;
+}
+
+/* Input fields */
+input[type="text"],
+input[type="tel"],
+input[type="email"],
+input[type="file"] {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #000;
+    width: 100%;
+}
+
+/* Read-only fields styling */
+input[readonly] {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* File and submit input */
+#avatar,
+#submitForm {
+    margin-top: 15px;
+}
+
+/* Buttons */
+button {
+    margin: 10px 8px 0;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: #1e90ff;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0f70d1;
+}
+
+/* Button container (optional) */
+#buttonContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
