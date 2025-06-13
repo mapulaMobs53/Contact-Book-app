@@ -13,39 +13,39 @@
             <button type="submit" id="submitApiKey">Submit</button>
         </form>
 
-        <script>
+        <script defer>
             let rootpath = "https://mysite.itvarsity.org/api/ContactBook/";
-            
+
             document.getElementById("apiKeyForm").addEventListener('submit', setApiKey);
-            
+
             function setApiKey(e) {
                 e.preventDefault();
                 let apiKey = document.getElementById("apiKey").value.trim();
-                
+
                 if (!apiKey) {
-                    alert("Please enter an API key");
+                    alert("Please enter an API key"); // Consider using a div for this message
                     return;
                 }
-                
-                // Fixed URL construction - added = sign and proper concatenation
+
                 fetch(rootpath + "controller/api-key/?apiKey=" + apiKey)
                 .then(function(response) {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        // Handle HTTP errors (e.g., 404, 500)
+                        return response.text().then(text => { throw new Error('HTTP error ' + response.status + ': ' + text); });
                     }
                     return response.text();
                 })
                 .then(function(data) {
-                    if (data == "1") {
+                    if (data === "1") { // Use strict equality
                         localStorage.setItem("apiKey", apiKey);
-                        window.location.href = "index.html"; // Fixed navigation
+                        window.location.href = "index.html";
                     } else {
                         alert("Invalid API Key Entered: " + data);
                     }
                 })
                 .catch(function(error) {
                     console.error('Error:', error);
-                    alert("Error validating API key. Please try again.");
+                    alert("Error validating API key. Please try again. Details: " + error.message);
                 });
             }
         </script>

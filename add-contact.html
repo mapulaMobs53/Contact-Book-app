@@ -11,93 +11,107 @@
         <form id="editForm">
             <label for="firstname">First name:</label>
             <input type="text" name="firstname" id="firstname" required><br/><br/>
-            
+
             <label for="lastname">Last name:</label>
             <input type="text" name="lastname" id="lastname" required><br/><br/>
-            
+
             <label for="mobile">Mobile:</label>
             <input type="tel" name="mobile" id="mobile" required><br/><br/>
-            
+
             <label for="email">Email:</label>
             <input type="email" name="email" id="email" required><br/><br/>
-            
+
             <label for="avatar">Select a file:</label><br/>
             <input type="file" name="avatar" id="avatar" accept="image/*"><br/><br/>
-            
+
             <button type="submit" id="submitForm">Submit</button>
         </form>
         <br/>
-        <button id="homeLink" type="button">Home</button>
-        
-        <script src="config.js"></script>
-        <script>
-            // Check if API key exists, redirect if not
-            function checkApiKey() {
-                if(!localStorage.getItem("apiKey")) {
-                    window.location.href = "enter-api-key.html";
-                    return null;
-                }
-                return localStorage.getItem("apiKey");
-            }
+        <button id="homeButton" type="button">Home</button>
 
-            let rootpath = "https://mysite.itvarsity.org/api/ContactBook/";
-            let apiKey = checkApiKey();
+        <script src="config.js"></script> <script defer>
+            // DO NOT redefine checkApiKey(), rootPath, or apiKey here.
+            // They should be available globally from config.js after it loads.
+
+            // The checkApiKey() in config.js should handle redirection if needed.
+            // If apiKey is null here, it means the user was redirected by config.js.
+            if (!apiKey) {
+                // This block should ideally not be reached if config.js redirects immediately.
+                // However, it's a good safeguard if the redirect from config.js fails for some reason.
+                console.error("API Key not available. Redirection to enter-api-key.html should occur.");
+                // You might add a small delay and then force redirect if not already.
+                // window.location.href = "enter-api-key.html";
+            }
 
             // Add event listeners
             document.getElementById("editForm").addEventListener('submit', submitForm);
-            document.getElementById("homeLink").addEventListener('click', homeLink);
+            // Changed listener to the new ID 'homeButton' and new function name 'goToHome'
+            document.getElementById("homeButton").addEventListener('click', goToHome);
 
             function submitForm(e) {
                 e.preventDefault();
-                
+
                 // Validate required fields
                 const firstname = document.getElementById("firstname").value.trim();
                 const lastname = document.getElementById("lastname").value.trim();
                 const mobile = document.getElementById("mobile").value.trim();
                 const email = document.getElementById("email").value.trim();
-                
+
                 if (!firstname || !lastname || !mobile || !email) {
-                    alert("Please fill in all required fields.");
+                    alert("Please fill in all required fields."); // Consider using a div for messages
                     return;
                 }
-                
+
                 // Validate email format
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    alert("Please enter a valid email address.");
+                    alert("Please enter a valid email address."); // Consider using a div for messages
                     return;
                 }
-                
+
+                if (!apiKey) {
+                    alert("API Key is missing. Cannot add contact.");
+                    // Optionally redirect to API key page if not already handled by config.js
+                    // window.location.href = "enter-api-key.html";
+                    return;
+                }
+
                 const form = new FormData(document.querySelector('#editForm'));
-                form.append('apiKey', apiKey);
-                
-                fetch(rootpath + 'controller/insert-contact/', {
+                form.append('apiKey', apiKey); // Ensure apiKey is appended
+
+                fetch(rootPath + 'controller/insert-contact/', { // Use rootPath from config.js
                     method: 'POST',
-                    headers: {'Accept': 'application/json, */*'},
+                    // No need for 'headers: {'Accept': 'application/json, */*}' for FormData,
+                    // as fetch sets Content-Type: multipart/form-data automatically.
                     body: form
                 })
                 .then(function(response) {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        // Read response text for more specific error from server
+                        return response.text().then(text => {
+                            throw new Error(`Network response was not ok. Status: ${response.status}, Message: ${text}`);
+                        });
                     }
-                    return response.text();
+                    return response.text(); // Assuming API returns "1" or an error string
                 })
                 .then(function(data) {
-                    if(data == "1") {
-                        alert("Contact added successfully!");
-                        // Clear form after successful submission
-                        document.getElementById("editForm").reset();
+                    if(data === "1") { // Use strict equality (===)
+                        alert("Contact added successfully!"); // Consider a less intrusive notification
+                        document.getElementById("editForm").reset(); // Clear form
+                        // OPTIONAL: Redirect to index.html after successful add
+                        window.location.href = "index.html";
                     } else {
-                        alert("Error: " + data);
+                        alert("Error adding contact: " + data); // Display server-side error message
                     }
                 })
                 .catch(function(error) {
-                    console.error('Error:', error);
-                    alert("Error adding contact. Please try again.");
+                    console.error('Fetch Error:', error);
+                    alert("Error adding contact. Please check console for details.");
                 });
             }
 
-            function homeLink() {
+            // Renamed function to avoid potential ID conflict
+            function goToHome() {
                 window.location.href = "index.html";
             }
         </script>

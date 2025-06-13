@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title>Contacts</title>
     <link rel="stylesheet" href="style.css">
-    <script src="config.js"></script>
-</head>
+    <script src="config.js"></script> </head>
 <body onload="fetchContacts()">
     <div class="container">
         <h1>Contact List</h1>
@@ -16,33 +15,68 @@
         </div>
     </div>
 
-    <script>
+    <script defer>
+        // Ensure that apiKey is available globally from config.js BEFORE this script runs.
+        // The 'defer' attribute on this script or putting it at the end of <body> helps.
+        // It's usually best to put all page-specific JS after all includes.
+
         document.getElementById("addContact").addEventListener('click', addContact);
         document.getElementById("refresh").addEventListener('click', fetchContacts);
 
         function fetchContacts() {
-            fetch(rootPath + "controller/get-contacts/")
-                .then(response => response.json())
+            // Check if apiKey is available. If config.js handled the redirect,
+            // this code will only run if apiKey is valid.
+            if (!apiKey) {
+                document.getElementById("table").innerHTML = "<p>API Key not found or invalid. Please refresh the page or re-enter your key.</p>";
+                console.error("API Key is missing or invalid. Cannot fetch contacts.");
+                return; // Stop execution if no API key
+            }
+
+            // Include the API key in the fetch request
+            fetch(rootPath + "controller/get-contacts/?apiKey=" + apiKey) // <-- **FIX IS HERE**
+                .then(response => {
+                    if (!response.ok) {
+                        // Improved error handling: try to read response text for more details
+                        return response.text().then(text => {
+                            throw new Error(`HTTP error ${response.status}: ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    displayOutput(data);
+                    // Check if data is an array or an object with expected structure
+                    if (Array.isArray(data) && data.length > 0) {
+                        displayOutput(data);
+                    } else {
+                        document.getElementById("table").innerHTML = "<p>No contacts found or unexpected data format.</p>";
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching contacts:', error);
-                    document.getElementById("table").innerHTML = "Error loading contacts";
+                    document.getElementById("table").innerHTML = `<p>Error loading contacts: ${error.message}. Please try again.</p>`;
                 });
         }
 
         function displayOutput(data) {
-            let output = "<table>";
+            let output = "<table class='contacts-table'>"; // Added a class for potential styling
+            output += `<thead>
+                           <tr>
+                               <th></th>
+                               <th>First Name</th>
+                               <th>Last Name</th>
+                           </tr>
+                       </thead><tbody>`; // Added table headers and tbody
             for (let a in data) {
+                // Ensure data[a].avatar is not null or empty before using
+                const avatarSrc = data[a].avatar ? `${rootPath}controller/uploads/${data[a].avatar}` : 'path/to/default/avatar.png'; // Provide a default avatar
                 output += `
                     <tr onclick="editContact(${data[a].id})">
-                        <td><img src="${rootPath}controller/uploads/${data[a].avatar}" width="40" alt="Avatar"/></td>
-                        <td><h5>${data[a].firstname}</h5></td>
-                        <td><h5>${data[a].lastname}</h5></td>
+                        <td><img src="${avatarSrc}" alt="Avatar"/></td>
+                        <td>${data[a].firstname}</td>
+                        <td>${data[a].lastname}</td>
                     </tr>`;
             }
-            output += "</table>";
+            output += "</tbody></table>";
             document.getElementById("table").innerHTML = output;
         }
 
